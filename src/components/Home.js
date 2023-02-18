@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogTitle from '@mui/material/DialogTitle'
 import { useEffect, useState } from 'react'
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore'
-import { db } from '../firebase'
+import { auth, db } from '../firebase'
 
 const Home = () => {
   const [postList, setPostList] = useState([])
@@ -78,12 +78,14 @@ const Home = () => {
               alignItems: 'center',
             }}>
             <h3 className="text-xl font-bold">@{post.author.username}</h3>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => handleOpen()}>
-              Delete
-            </Button>
+            {post.author.id === auth.currentUser.uid && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => handleOpen()}>
+                Delete
+              </Button>
+            )}
           </Box>
           <Dialog
             open={open}
