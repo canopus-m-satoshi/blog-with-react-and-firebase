@@ -5,12 +5,18 @@ import TextareaAutosize from '@mui/base/TextareaAutosize'
 import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { addDoc, collection } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import { useNavigate } from 'react-router-dom'
 
-const CreatePost = () => {
+const CreatePost = ({ isAuth }) => {
+  useEffect(() => {
+    if (!isAuth) {
+      navigate('/')
+    }
+  }, [])
+
   const [title, setTitle] = useState('')
   const [postText, setPostText] = useState('')
   const navigate = useNavigate()
