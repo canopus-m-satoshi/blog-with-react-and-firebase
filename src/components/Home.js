@@ -1,8 +1,11 @@
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogTitle from '@mui/material/DialogTitle'
 import { useEffect, useState } from 'react'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase'
 
 const Home = () => {
@@ -19,6 +22,22 @@ const Home = () => {
 
     getPosts()
   }, [])
+
+  const [open, setOpen] = useState(false)
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const handleDeletePost = async (id) => {
+    await deleteDoc(doc(db, 'posts', id))
+    window.location.href = '/'
+    setOpen(false)
+  }
 
   return (
     <Container
@@ -59,10 +78,34 @@ const Home = () => {
               alignItems: 'center',
             }}>
             <h3 className="text-xl font-bold">@{post.author.username}</h3>
-            <Button variant="contained" color="error">
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => handleOpen()}>
               Delete
             </Button>
           </Box>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description">
+            <DialogTitle id="alert-dialog-title">
+              {'Are you sure to delete this post?'}
+            </DialogTitle>
+            <DialogActions>
+              <Button variant="contained" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => handleDeletePost(post.id)}
+                autoFocus>
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Box>
       ))}
     </Container>
